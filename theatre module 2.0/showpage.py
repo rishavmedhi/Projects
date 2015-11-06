@@ -5,7 +5,7 @@ movie
 	edetails:json of entire movie details
 	place: place to be checked
 	placec: code of place... as per website
-	tdate: todays date in yyyymmdd
+	tdate: today's date in yyyymmdd
 ''' 
 
 import urllib2
@@ -39,5 +39,4 @@ def showpage(edetails,place,placec,tdate):
 		for k in a:
 			tlist.append(str(k.get_text()))
 		time.append(tlist)
-	print len(theatre_list),len(time)
 	return theatre_list,time
