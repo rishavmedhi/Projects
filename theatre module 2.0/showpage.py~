@@ -1,15 +1,10 @@
-'''
-	showpage(edetails,place,placec,tdate)
-it's a function that extracts the theatre names and show timings of the theatres that are showing 
-movie
-	edetails:json of entire movie details
-	place: place to be checked
-	placec: code of place... as per website
-	tdate: todays date in yyyymmdd
-''' 
-
+#http://in.bookmyshow.com/buytickets/bridge-of-spies-chennai/movie-chen-ET00034536-MT/20151104
 import urllib2
 from bs4 import BeautifulSoup
+import MySQLdb
+
+db=MySQLdb.connect("localhost","root","1","theatre")
+cursor=db.cursor()
 
 def showpage(edetails,place,placec,tdate):
 	url="http://in.bookmyshow.com/buytickets/"+edetails["Event"]["EventUrlTitle"]+"-"+place.lower()+"/movie-"+placec+"-"+edetails["Event"]["EventCode"]+"-MT/"+str(tdate)
@@ -41,3 +36,6 @@ def showpage(edetails,place,placec,tdate):
 		time.append(tlist)
 	print len(theatre_list),len(time)
 	return theatre_list,time
+
+#showpage()
+#showpage("bridge-of-spies","chennai","chen","ET00034536","20151104")
