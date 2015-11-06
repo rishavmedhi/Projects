@@ -13,7 +13,7 @@ mdb=client['theatre']
 qb=mdb['movies']
 
 t_date=time.strftime("20%y%m%d")
-db=MySQLdb.connect("localhost","root","1","theatre")
+db=MySQLdb.connect("localhost","","","theatre")
 cursor=db.cursor()
 up_time = datetime.datetime.now()
 sql="SELECT `name`,`code` from `citynew`;"
@@ -33,8 +33,6 @@ for row in results:
 	mdiv=soup.find("div",class_="mv-row")
 	for i in mdiv.find_all("div",class_="wow fadeIn movie-card-container"):
 		#detail=i.find("img")
-		th_list=[]
-		sh_times=[]
 		detail=i.find("div",class_="__name")
 		a=detail.find("a")
 		movie_name=a.get('title')
@@ -47,6 +45,7 @@ for row in results:
 		exec(str(data))	
 		if qb.find({"Event.EventCode":str(movie_code)}).count()==0:
 			qb.insert(event_details)
-			th_list,sh_times=showpage(event_details,r,c,t_date)
+			showpage(event_details,r,c,t_date)
 		else:
-			th_list,sh_times=showpage(event_details,r,c,t_date)
+			showpage(event_details,r,c,t_date)
+		break	
