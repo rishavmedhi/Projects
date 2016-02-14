@@ -1,0 +1,3 @@
+This program performs identification of "is a", "is", "is the","was","was the","was a","was an" patterns in a text
+It can read from either a file or from a mongo database
+It identifies the patterns, records the number of occurences and gives the probablity of occurence of the pattern in the document
