@@ -13,6 +13,12 @@ client = pymongo.MongoClient()
 mdb=client['theatre']
 qb=mdb['movies']
 
+def setProxy():
+	proxy_handler = urllib2.ProxyHandler({})
+	opener = urllib2.build_opener(proxy_handler)
+	opener.addheaders = [('User-agent', 'Mozilla/5.0')]
+	urllib2.install_opener(opener)
+
 def chngcity(name):
 	sql1="SELECT `place` from `ncrtheatre` where `theatrename` REGEXP '%s';"%(str(name))
 	res=cursor.execute(sql1)
@@ -28,11 +34,12 @@ def chngcity(name):
 		r=r[0]
 		return str(r)
 
+setProxy()
 f=open("error","a")
 t_date=time.strftime("20%y%m%d")
 up_time = datetime.datetime.now()
 
-db=MySQLdb.connect("localhost","","","theatre")
+db=MySQLdb.connect("localhost","root","1","theatre")
 cursor=db.cursor()
 
 sql="SELECT `name`,`code` from `citynew`;"

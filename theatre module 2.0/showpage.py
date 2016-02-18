@@ -17,7 +17,7 @@ def showpage(edetails,place,placec,tdate):
 	page=urllib2.urlopen(url).read()
 	soup=BeautifulSoup(page)
 	part=soup.find("section",class_="phpShowtimes showtimes")
-	theatre_wlist=part.find_all("a",class_="__name")
+	theatre_wlist=part.find_all("a",class_="__venue-name")
 	time_body=part.find_all("div",class_="body")	
 	theatre_list=[]
 	tlist=[]
@@ -37,6 +37,6 @@ def showpage(edetails,place,placec,tdate):
 		a=j.find_all("a")
 		tlist=[]
 		for k in a:
-			tlist.append(str(k.get_text()))
+			tlist.append(str(k.get_text()).strip())
 		time.append(tlist)
 	return theatre_list,time
