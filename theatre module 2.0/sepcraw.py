@@ -1,18 +1,22 @@
-#sample URL for getting movie details
-#http://in.bookmyshow.com/serv/getData.bms?cmd=SYNOPSISDATA&event_code=ET00035260&action=Synopsis
-
 import datetime
 import time
 import MySQLdb
 from bs4 import BeautifulSoup
 import urllib2
 from showpage import *
-import sepcraw
 
 import pymongo
 client = pymongo.MongoClient()
 mdb=client['theatre']
 qb=mdb['movies']
+
+db=MySQLdb.connect("localhost","root","1","theatre")
+cursor=db.cursor()
+
+count=0
+f=open("error","a")
+t_date=time.strftime("20%y%m%d")
+up_time = datetime.datetime.now()
 
 def setProxy():
 	proxy_handler = urllib2.ProxyHandler({})
@@ -35,30 +39,11 @@ def chngcity(name):
 		r=r[0]
 		return str(r)
 
-setProxy()
-f=open("error","a")
-t_date=time.strftime("20%y%m%d")
-up_time = datetime.datetime.now()
-
-db=MySQLdb.connect("localhost","root","1","theatre")
-cursor=db.cursor()
-
-sql="SELECT `name`,`code` from `citynew`;"
-cursor.execute(sql)
-results=cursor.fetchall()
-
-count=0
-city_error=[]
-
-for row in results:
-	r=str(row[0])
-	r=r.replace(" ","-")
-	r=r.replace("(","")
-	r=r.replace(")","")
-	c=str(row[1])
+def sepcraw(r,c):
+	global count
+	setProxy()
 	print r
 	url="http://in.bookmyshow.com/"+r+"/movies/nowshowing"
-	
 	try:
 		page=urllib2.urlopen(url).read()
 		soup=BeautifulSoup(page)
@@ -98,7 +83,7 @@ for row in results:
 				f.write("MOVIE :: "+str(movie_code)+str(r)+str(e)+"\n")
 				pass
 			
-			for i in th_list:
+			for i in range(0,len(th_list)):
 				try:
 					th=str(th_list[i])
 					j=MySQLdb.escape_string(str(sh_times[i]))
@@ -122,8 +107,8 @@ for row in results:
 						print str(count)+" data retained/updated\n"
 					if count%20==0:
 						time.sleep(15)
-						
 
+						
 				except Exception as e:
 					print str(e)
 					time.sleep(30)
@@ -134,18 +119,9 @@ for row in results:
 		print str(e)
 		time.sleep(30)
 		f.write("CITY :: "+str(movie_code)+" "+str(r)+" "+str(e)+"\n")
-		city_error.append([r,c])
 		pass
 
-sql4="DELETE from `showtimes2` where `updatetime`<'%d';"%(int(t_date))
-cursor.execute(sql4)
-db.commit()
-db.close()
-f.close()
-
-#error handling of the cities that were not crawled
-fil=open("city_error","w")
-fil.write(str(city_error))
-fil.close()
-for i in city_error:
-	sepcraw.sepcraw(i[0],i[1])
+	sql4="DELETE from `showtimes2` where `updatetime`<'%d';"%(int(t_date))
+	cursor.execute(sql4)
+	db.commit()
+	db.close()
